@@ -1,0 +1,73 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Space Grotesk", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+}
+
+@layer utilities {
+  /* Cinematic utilities */
+  .text-glow-orange {
+    text-shadow: 0 0 12px rgba(255, 138, 61, 0.4);
+  }
+  .text-glow-blue {
+    text-shadow: 0 0 12px rgba(77, 163, 255, 0.4);
+  }
+  .bg-radial-gradient {
+    background: radial-gradient(circle at center, var(--tw-gradient-from) 0%, var(--tw-gradient-to) 100%);
+  }
+  .animate-shimmer {
+    animation: shimmer 3s infinite linear;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* Base style resets and customizations */
+body {
+  background-color: #010204;
+  color: #f5f5f5;
+  overflow-x: hidden;
+  font-family: var(--font-sans);
+  transition: background-color 0.4s ease, color 0.4s ease;
+}
+
+/* Background overrides for cards and panels: Translucent cosmic glass */
+.bg-\[\#050505\] {
+  background-color: rgba(4, 5, 12, 0.62) !important;
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  transition: background-color 0.4s ease;
+}
+
+.bg-\[\#0B0B0B\] {
+  background-color: rgba(6, 8, 16, 0.68) !important;
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  transition: background-color 0.4s ease;
+}
+
+/* Custom visual scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #050505;
+}
+::-webkit-scrollbar-thumb {
+  background: #1a1a1a;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #2a2a2a;
+}
+
