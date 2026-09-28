@@ -16,9 +16,8 @@ interface VideoPlayerProps {
 }
 
 // Seamless Continuous YouTube Embed URL:
-// - youtube-nocookie.com: Privacy-enhanced mode with minimal branding
-// - autoplay=1 & mute=0: Starts with audio enabled by default
-// - loop=1 & playlist=rpmYtMyw6gQ: Infinitely loops video
+// - autoplay=1 & mute=1: Guarantees browser autoplay permission on page load without blocking
+// - loop=1 & playlist=rpmYtMyw6gQ: Infinitely loops video continuously
 // - controls=0: Disables player bar
 // - cc_load_policy=0 & cc_lang_pref=none: Disables captions/subtitles
 // - showinfo=0 & rel=0 & iv_load_policy=3: Prevents titles, annotations & related video popups
@@ -26,14 +25,14 @@ interface VideoPlayerProps {
 // - playsinline=1: Plays directly inline across all mobile & desktop browsers
 // - enablejsapi=1: Allows programmatic playback and audio commands
 const YOUTUBE_EMBED_URL =
-  "https://www.youtube-nocookie.com/embed/rpmYtMyw6gQ?autoplay=1&mute=0&loop=1&playlist=rpmYtMyw6gQ&controls=0&showinfo=0&rel=0&iv_load_policy=3&modestbranding=1&playsinline=1&enablejsapi=1&cc_load_policy=0&cc_lang_pref=none&disablekb=1&fs=0&autohide=1";
+  "https://www.youtube-nocookie.com/embed/rpmYtMyw6gQ?autoplay=1&mute=1&loop=1&playlist=rpmYtMyw6gQ&controls=0&showinfo=0&rel=0&iv_load_policy=3&modestbranding=1&playsinline=1&enablejsapi=1&cc_load_policy=0&cc_lang_pref=none&disablekb=1&fs=0&autohide=1";
 
 export default function VideoPlayer({
-  videoMuted = false,
+  videoMuted = true,
   onToggleMute,
 }: VideoPlayerProps) {
   const iframeRef = useRef<HTMLIFrameElement>(null);
-  const [isMuted, setIsMuted] = useState(videoMuted);
+  const [isMuted, setIsMuted] = useState(true);
 
   // Send commands to YouTube iframe
   const sendCommand = useCallback((func: string, args: unknown[] = []) => {
@@ -53,53 +52,67 @@ export default function VideoPlayer({
   }, []);
 
   const handleIframeLoad = () => {
-    // Ensure video is playing continuously and audio is enabled
-    sendCommand("playVideo");
-    if (!isMuted) {
-      sendCommand("unMute");
-      sendCommand("setVolume", [100]);
+    // Send listening handshake to activate JS API
+    if (iframeRef.current?.contentWindow) {
+      iframeRef.current.contentWindow.postMessage(
+        JSON.stringify({ event: "listening" }),
+        "*"
+      );
     }
+    // Command autoplay immediately upon load
+    sendCommand("playVideo");
     sendCommand("unloadModule", ["captions"]);
     sendCommand("unloadModule", ["cc"]);
   };
 
-  // Ensure audio activates on first user gesture if browser initially blocked unmuted autoplay
+  // Aggressive initial autoplay verification to bypass any browser race conditions
   useEffect(() => {
-    if (!isMuted) {
-      const enableAudioOnGesture = () => {
-        sendCommand("unMute");
-        sendCommand("setVolume", [100]);
-        sendCommand("playVideo");
-      };
+    const t1 = setTimeout(() => sendCommand("playVideo"), 300);
+    const t2 = setTimeout(() => sendCommand("playVideo"), 1000);
+    const t3 = setTimeout(() => sendCommand("playVideo"), 2000);
 
-      window.addEventListener("pointerdown", enableAudioOnGesture, { once: true });
-      window.addEventListener("keydown", enableAudioOnGesture, { once: true });
-      window.addEventListener("scroll", enableAudioOnGesture, { once: true });
+    return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+      clearTimeout(t3);
+    };
+  }, [sendCommand]);
 
-      return () => {
-        window.removeEventListener("pointerdown", enableAudioOnGesture);
-        window.removeEventListener("keydown", enableAudioOnGesture);
-        window.removeEventListener("scroll", enableAudioOnGesture);
-      };
-    }
-  }, [isMuted, sendCommand]);
+  // Turn on audio on first user gesture (pointerdown, click, scroll) without pausing the video
+  useEffect(() => {
+    const handleFirstUserGesture = () => {
+      setIsMuted(false);
+      if (onToggleMute) onToggleMute(false);
+      sendCommand("playVideo");
+      sendCommand("unMute");
+      sendCommand("setVolume", [100]);
+    };
 
-  // Heartbeat to guarantee the video never stalls or gets paused
+    window.addEventListener("pointerdown", handleFirstUserGesture, { once: true });
+    window.addEventListener("keydown", handleFirstUserGesture, { once: true });
+    window.addEventListener("scroll", handleFirstUserGesture, { once: true });
+
+    return () => {
+      window.removeEventListener("pointerdown", handleFirstUserGesture);
+      window.removeEventListener("keydown", handleFirstUserGesture);
+      window.removeEventListener("scroll", handleFirstUserGesture);
+    };
+  }, [sendCommand, onToggleMute]);
+
+  // Continuous playback heartbeat to guarantee video stays playing
   useEffect(() => {
     const interval = setInterval(() => {
       sendCommand("playVideo");
-      if (!isMuted) {
-        sendCommand("unMute");
-      }
-    }, 3000);
+    }, 4000);
     return () => clearInterval(interval);
-  }, [isMuted, sendCommand]);
+  }, [sendCommand]);
 
   const toggleSound = (e?: React.MouseEvent) => {
     if (e) e.stopPropagation();
     const nextMuted = !isMuted;
     setIsMuted(nextMuted);
     if (onToggleMute) onToggleMute(nextMuted);
+    sendCommand("playVideo");
     if (nextMuted) {
       sendCommand("mute");
     } else {
@@ -119,7 +132,7 @@ export default function VideoPlayer({
         <div
           onClick={() => toggleSound()}
           className="absolute inset-0 z-20 cursor-pointer select-none"
-          title={isMuted ? "Click video to unmute" : "Click video to mute"}
+          title={isMuted ? "Click to enable sound" : "Click to mute"}
         />
 
         {/* 
@@ -148,7 +161,7 @@ export default function VideoPlayer({
             {isMuted ? (
               <>
                 <VolumeX className="w-3.5 h-3.5 text-white/60" />
-                <span className="text-[10px] tracking-wider uppercase font-medium">Unmute</span>
+                <span className="text-[10px] tracking-wider uppercase font-medium">Audio Off</span>
               </>
             ) : (
               <>

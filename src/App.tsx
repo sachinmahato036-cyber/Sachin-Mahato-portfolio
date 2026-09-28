@@ -18,8 +18,8 @@ import CinematicLiveBackground from "./components/CinematicLiveBackground";
 import { Mail } from "lucide-react";
 
 export default function App() {
-  // Global interactive states (audio on by default)
-  const [videoMuted, setVideoMuted] = useState(false);
+  // Global interactive states (video autoplays immediately)
+  const [videoMuted, setVideoMuted] = useState(true);
   const [videoPlaying, setVideoPlaying] = useState(true);
 
   const { scrollYProgress } = useScroll();
