@@ -74,8 +74,6 @@ export default function AboutSection() {
       className="relative w-full max-w-7xl mx-auto px-4 sm:px-6 md:px-8 py-24 md:py-32 border-t border-white/5 bg-transparent"
       id="about-section"
     >
-      <div className="absolute inset-0 bg-radial-gradient from-[#4da3ff]/5 to-transparent pointer-events-none z-0 filter blur-3xl opacity-60" />
-
       {/* Sub-header title */}
       <motion.div
         initial={{ opacity: 0, y: 25 }}
@@ -86,7 +84,7 @@ export default function AboutSection() {
         id="about-header-text"
       >
         <span className="text-xs font-mono font-bold tracking-[0.2em] text-[#FF8A3D] uppercase mb-2">
-          [ 01 // PROFILE ]
+          [ 02 // EXECUTIVE PROFILE ]
         </span>
         <h2 className="text-3xl md:text-5xl font-display font-black text-white uppercase tracking-tight">
           Professional <span className="text-[#FF8A3D] text-glow-orange">Summary</span>

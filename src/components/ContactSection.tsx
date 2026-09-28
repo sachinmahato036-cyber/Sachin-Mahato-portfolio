@@ -380,9 +380,6 @@ export default function ContactSection() {
       className="relative w-full max-w-7xl mx-auto px-4 sm:px-6 md:px-8 py-24 md:py-32 border-t border-white/5 bg-transparent"
       id="contact-section"
     >
-      {/* Dynamic spot background layer */}
-      <div className="absolute top-1/2 right-1/4 -translate-y-1/2 w-[60vw] h-[60vw] rounded-full bg-radial-gradient from-[#ff8a3d]/5 to-transparent pointer-events-none z-0 filter blur-3xl opacity-40" />
-
       {/* Header section */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -393,7 +390,7 @@ export default function ContactSection() {
         id="contact-header-text"
       >
         <span className="text-xs font-mono font-bold tracking-[0.2em] text-[#FF8A3D] uppercase mb-2">
-          [ 06 // CONNECT ]
+          [ 07 // CONNECT ]
         </span>
         <h2 className="text-3xl md:text-5xl font-display font-black text-white uppercase tracking-tight">
           Initiate <span className="text-[#FF8A3D] text-glow-orange">Contact</span>

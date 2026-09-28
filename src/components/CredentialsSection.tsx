@@ -187,9 +187,6 @@ export default function CredentialsSection() {
       className="relative w-full max-w-7xl mx-auto px-4 sm:px-6 md:px-8 py-24 md:py-32 border-t border-white/5 bg-transparent"
       id="credentials-section"
     >
-      {/* Cinematic subtle glow backdrop element */}
-      <div className="absolute inset-0 bg-radial-gradient from-purple-500/5 to-transparent pointer-events-none z-0 filter blur-3xl opacity-30" />
-
       {/* Header section with sequence indicator */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -200,7 +197,7 @@ export default function CredentialsSection() {
         id="credentials-header-text"
       >
         <span className="text-xs font-mono font-bold tracking-[0.2em] text-[#FF8A3D] uppercase mb-2">
-          [ 05 // CREDENTIALS & EDUCATION ]
+          [ 06 // CREDENTIALS & EDUCATION ]
         </span>
         <h2 className="text-3xl md:text-5xl font-display font-black text-white uppercase tracking-tight">
           Assessments & <span className="text-[#FFB067] text-glow-orange">Milestones</span>

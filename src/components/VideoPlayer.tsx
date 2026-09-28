@@ -4,7 +4,6 @@
  */
 
 import React, { useRef, useState, useEffect, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import { Volume2, VolumeX } from "lucide-react";
 
 interface VideoPlayerProps {
@@ -18,7 +17,7 @@ interface VideoPlayerProps {
 
 // Seamless Continuous YouTube Embed URL:
 // - youtube-nocookie.com: Privacy-enhanced mode with minimal branding
-// - autoplay=1 & mute=1: Instant continuous autoplay without permission blocking
+// - autoplay=1 & mute=0: Starts with audio enabled by default
 // - loop=1 & playlist=rpmYtMyw6gQ: Infinitely loops video
 // - controls=0: Disables player bar
 // - cc_load_policy=0 & cc_lang_pref=none: Disables captions/subtitles
@@ -27,11 +26,14 @@ interface VideoPlayerProps {
 // - playsinline=1: Plays directly inline across all mobile & desktop browsers
 // - enablejsapi=1: Allows programmatic playback and audio commands
 const YOUTUBE_EMBED_URL =
-  "https://www.youtube-nocookie.com/embed/rpmYtMyw6gQ?autoplay=1&mute=1&loop=1&playlist=rpmYtMyw6gQ&controls=0&showinfo=0&rel=0&iv_load_policy=3&modestbranding=1&playsinline=1&enablejsapi=1&cc_load_policy=0&cc_lang_pref=none&disablekb=1&fs=0&autohide=1";
+  "https://www.youtube-nocookie.com/embed/rpmYtMyw6gQ?autoplay=1&mute=0&loop=1&playlist=rpmYtMyw6gQ&controls=0&showinfo=0&rel=0&iv_load_policy=3&modestbranding=1&playsinline=1&enablejsapi=1&cc_load_policy=0&cc_lang_pref=none&disablekb=1&fs=0&autohide=1";
 
-export default function VideoPlayer({ glowActive = true }: VideoPlayerProps) {
+export default function VideoPlayer({
+  videoMuted = false,
+  onToggleMute,
+}: VideoPlayerProps) {
   const iframeRef = useRef<HTMLIFrameElement>(null);
-  const [isMuted, setIsMuted] = useState(true);
+  const [isMuted, setIsMuted] = useState(videoMuted);
 
   // Send commands to YouTube iframe
   const sendCommand = useCallback((func: string, args: unknown[] = []) => {
@@ -51,49 +53,66 @@ export default function VideoPlayer({ glowActive = true }: VideoPlayerProps) {
   }, []);
 
   const handleIframeLoad = () => {
-    // Ensure video is playing continuously and captions module is unloaded
+    // Ensure video is playing continuously and audio is enabled
     sendCommand("playVideo");
+    if (!isMuted) {
+      sendCommand("unMute");
+      sendCommand("setVolume", [100]);
+    }
     sendCommand("unloadModule", ["captions"]);
     sendCommand("unloadModule", ["cc"]);
   };
+
+  // Ensure audio activates on first user gesture if browser initially blocked unmuted autoplay
+  useEffect(() => {
+    if (!isMuted) {
+      const enableAudioOnGesture = () => {
+        sendCommand("unMute");
+        sendCommand("setVolume", [100]);
+        sendCommand("playVideo");
+      };
+
+      window.addEventListener("pointerdown", enableAudioOnGesture, { once: true });
+      window.addEventListener("keydown", enableAudioOnGesture, { once: true });
+      window.addEventListener("scroll", enableAudioOnGesture, { once: true });
+
+      return () => {
+        window.removeEventListener("pointerdown", enableAudioOnGesture);
+        window.removeEventListener("keydown", enableAudioOnGesture);
+        window.removeEventListener("scroll", enableAudioOnGesture);
+      };
+    }
+  }, [isMuted, sendCommand]);
 
   // Heartbeat to guarantee the video never stalls or gets paused
   useEffect(() => {
     const interval = setInterval(() => {
       sendCommand("playVideo");
+      if (!isMuted) {
+        sendCommand("unMute");
+      }
     }, 3000);
     return () => clearInterval(interval);
-  }, [sendCommand]);
+  }, [isMuted, sendCommand]);
 
   const toggleSound = (e?: React.MouseEvent) => {
     if (e) e.stopPropagation();
     const nextMuted = !isMuted;
     setIsMuted(nextMuted);
-    sendCommand(nextMuted ? "mute" : "unMute");
+    if (onToggleMute) onToggleMute(nextMuted);
+    if (nextMuted) {
+      sendCommand("mute");
+    } else {
+      sendCommand("unMute");
+      sendCommand("setVolume", [100]);
+    }
   };
 
   return (
     <div className="relative w-full max-w-4xl mx-auto flex flex-col items-center">
-      {/* 1. LAYER ONE: Cinematic Ambient Halo Glow */}
-      <AnimatePresence>
-        {glowActive && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.7 }}
-            className="absolute -inset-1 sm:-inset-2 rounded-3xl sm:rounded-[2.5rem] bg-gradient-to-r from-[#FF8A3D]/25 via-[#4DA3FF]/20 to-[#FF8A3D]/25 blur-2xl filter saturate-150 pointer-events-none z-0"
-            style={{
-              background:
-                "radial-gradient(circle at 50% 50%, rgba(255,138,61,0.22) 0%, rgba(77,163,255,0.18) 50%, rgba(0,0,0,0) 80%)",
-            }}
-          />
-        )}
-      </AnimatePresence>
-
-      {/* 2. LAYER TWO: Clean Cinematic Responsive Continuous Video Frame */}
+      {/* Clean Cinematic Responsive Continuous Video Frame */}
       <div
-        className="group relative w-full aspect-video rounded-2xl md:rounded-3xl border border-white/15 bg-black shadow-[0_25px_60px_-15px_rgba(0,0,0,0.9)] overflow-hidden z-10"
+        className="group relative w-full aspect-video rounded-2xl md:rounded-3xl border border-white/10 bg-black shadow-[0_20px_50px_rgba(0,0,0,0.9)] overflow-hidden z-10"
         id="cinematic-video-player"
       >
         {/* Transparent Shield Layer: Intercepts all clicks and touches so user interactions never trigger YouTube's native play/pause overlay, logos, or links */}
@@ -118,13 +137,13 @@ export default function VideoPlayer({ glowActive = true }: VideoPlayerProps) {
           tabIndex={-1}
         />
 
-        {/* Subtle, luxury sound control toggle positioned on the bottom-left */}
+        {/* Subtle, minimalist sound control toggle positioned on the bottom-left */}
         <div className="absolute bottom-3 left-3 sm:bottom-4 sm:left-4 z-30 pointer-events-auto">
           <button
             type="button"
             onClick={toggleSound}
             aria-label={isMuted ? "Unmute audio" : "Mute audio"}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/70 hover:bg-black/90 border border-white/20 text-white/80 hover:text-white backdrop-blur-md transition-all text-xs font-mono shadow-lg hover:scale-105 active:scale-95 cursor-pointer"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/80 hover:bg-black border border-white/20 text-white/80 hover:text-white backdrop-blur-md transition-all text-xs font-mono shadow-lg hover:scale-105 active:scale-95 cursor-pointer"
           >
             {isMuted ? (
               <>

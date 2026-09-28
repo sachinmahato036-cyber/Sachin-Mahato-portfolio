@@ -6,6 +6,7 @@
 import React, { useRef } from "react";
 import { motion, useScroll, useSpring } from "motion/react";
 import { Briefcase, CheckCircle, Milestone, ChevronLeft, ChevronRight, GraduationCap, Users } from "lucide-react";
+import IntersectionObserverCard from "./IntersectionObserverCard";
 
 interface MilestoneItem {
   duration: string;
@@ -153,13 +154,10 @@ export default function ExperienceSection() {
       className="relative w-full max-w-7xl mx-auto px-4 sm:px-6 md:px-8 py-24 md:py-32 border-t border-white/5 bg-transparent overflow-hidden"
       id="experience-section"
     >
-      {/* Background ambient lighting */}
-      <div className="absolute top-1/2 left-1/4 -translate-y-1/2 w-[60vw] h-[60vw] rounded-full bg-radial-gradient from-[#4da3ff]/5 to-transparent pointer-events-none z-0 filter blur-3xl opacity-40" />
-
       {/* Header text */}
       <div className="relative mb-8 md:mb-12 flex flex-col items-start text-left z-10" id="experience-header-text">
         <span className="text-xs font-mono font-bold tracking-[0.2em] text-[#4DA3FF] uppercase mb-2">
-          [ 02 // TIMELINE ]
+          [ 03 // TIMELINE ]
         </span>
         <h2 className="text-3xl md:text-5xl font-display font-black text-white uppercase tracking-tight">
           Experience & <span className="text-[#4DA3FF] text-glow-blue">Education</span>
@@ -212,12 +210,11 @@ export default function ExperienceSection() {
         style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
       >
         {MILESTONES.map((item, index) => (
-          <motion.div
+          <IntersectionObserverCard
             key={index}
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: index * 0.08 }}
+            delay={Math.min(index * 70, 420)}
+            direction="up"
+            distance={20}
             className="flex-shrink-0 w-[330px] sm:w-[380px] snap-center"
           >
             <div className="h-full p-6 rounded-2xl bg-white/[0.02] border border-white/5 hover:border-white/15 hover:shadow-[0_0_30px_rgba(255,255,255,0.03)] transition-all flex flex-col justify-between space-y-4 text-left group">
@@ -289,7 +286,7 @@ export default function ExperienceSection() {
                 ))}
               </div>
             </div>
-          </motion.div>
+          </IntersectionObserverCard>
         ))}
       </div>
     </section>

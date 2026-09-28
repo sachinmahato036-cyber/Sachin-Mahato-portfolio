@@ -32,6 +32,7 @@ import {
   ComposedChart
 } from "recharts";
 import { ProjectSection } from "../types";
+import IntersectionObserverCard from "./IntersectionObserverCard";
 
 // Static dashboard metric structures for Decathlon Project tabs
 const DECATHLON_TABS: Record<string, ProjectSection> = {
@@ -382,8 +383,6 @@ export default function ProjectsSection() {
       className="relative w-full max-w-7xl mx-auto px-4 sm:px-6 md:px-8 py-24 md:py-32 border-t border-white/5 bg-transparent"
       id="projects-section"
     >
-      <div className="absolute inset-0 bg-radial-gradient from-[#ff8a3d]/5 to-transparent pointer-events-none z-0 filter blur-3xl opacity-50" />
-
       {/* Header section */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -394,7 +393,7 @@ export default function ProjectsSection() {
         id="projects-header-text"
       >
         <span className="text-xs font-mono font-bold tracking-[0.2em] text-[#FF8A3D] uppercase mb-2">
-          [ 03 // LIVE CASES ]
+          [ 04 // LIVE CASES ]
         </span>
         <h2 className="text-3xl md:text-5xl font-display font-black text-white uppercase tracking-tight">
           Retail Merchandising & <span className="text-[#FF8A3D] text-glow-orange">Live Project</span>
@@ -415,69 +414,72 @@ export default function ProjectsSection() {
       >
         {/* Left Side: Interactive Nav Tabs */}
         <div className="lg:col-span-4 flex flex-col space-y-3 w-full" id="dashboard-tab-menu">
-          <TiltCard variants={itemVariants} className="p-4 rounded-xl bg-white/[0.02] border border-white/5 mb-4 text-left cursor-pointer hover:border-[#FF8A3D]/30 transition-colors">
-            <div className="flex items-center justify-between mb-1">
-              <span className="text-[10px] font-mono tracking-widest text-[#FFB067] uppercase font-bold block">
-                Live Retail Project
-              </span>
-              <span className="text-[9px] font-mono text-gray-400 px-2 py-0.5 rounded-full bg-white/5 border border-white/5">
-                Team Size: 15
-              </span>
-            </div>
-            <h3 className="text-base font-display font-bold text-white uppercase tracking-wide">
-              DECATHLON RETAIL CASE
-            </h3>
-            <p className="text-xs text-gray-400 mt-1 leading-relaxed">
-              Mentor: <span className="text-white font-medium">Faiz Salman Mitha</span>. Engaged with customers to understand buying behavior, assisted in product recommendations, and optimized store merchandising.
-            </p>
-            <div className="flex flex-wrap gap-1 mt-2.5">
-              <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-white/5 text-[#FFB067]">Consultative Selling</span>
-              <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-white/5 text-sky-400">Customer Engagement</span>
-              <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-white/5 text-emerald-400">Merchandising</span>
-            </div>
-          </TiltCard>
+          <IntersectionObserverCard delay={80} direction="up" distance={20}>
+            <TiltCard variants={itemVariants} className="p-4 rounded-xl bg-white/[0.02] border border-white/5 mb-4 text-left cursor-pointer hover:border-[#FF8A3D]/30 transition-colors">
+              <div className="flex items-center justify-between mb-1">
+                <span className="text-[10px] font-mono tracking-widest text-[#FFB067] uppercase font-bold block">
+                  Live Retail Project
+                </span>
+                <span className="text-[9px] font-mono text-gray-400 px-2 py-0.5 rounded-full bg-white/5 border border-white/5">
+                  Team Size: 15
+                </span>
+              </div>
+              <h3 className="text-base font-display font-bold text-white uppercase tracking-wide">
+                DECATHLON RETAIL CASE
+              </h3>
+              <p className="text-xs text-gray-400 mt-1 leading-relaxed">
+                Mentor: <span className="text-white font-medium">Faiz Salman Mitha</span>. Engaged with customers to understand buying behavior, assisted in product recommendations, and optimized store merchandising.
+              </p>
+              <div className="flex flex-wrap gap-1 mt-2.5">
+                <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-white/5 text-[#FFB067]">Consultative Selling</span>
+                <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-white/5 text-sky-400">Customer Engagement</span>
+                <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-white/5 text-emerald-400">Merchandising</span>
+              </div>
+            </TiltCard>
+          </IntersectionObserverCard>
 
-          {(Object.keys(DECATHLON_TABS) as Array<keyof typeof DECATHLON_TABS>).map((key) => {
+          {(Object.keys(DECATHLON_TABS) as Array<keyof typeof DECATHLON_TABS>).map((key, tabIdx) => {
             const isSelected = activeTab === key;
             const tab = DECATHLON_TABS[key];
             return (
-              <motion.button
-                variants={itemVariants}
-                key={key}
-                onClick={() => setActiveTab(key)}
-                className={`relative p-4 rounded-xl text-left border transition-all flex items-center gap-3.5 group cursor-pointer ${
-                  isSelected
-                    ? "bg-gradient-to-r from-white/[0.04] to-transparent border-[#FF8A3D]/40 shadow-lg text-white"
-                    : "bg-transparent border-white/5 text-gray-400 hover:border-white/10 hover:bg-white/[0.01]"
-                }`}
-                id={`tab-btn-${key}`}
-              >
-                {/* Active slider bar */}
-                {isSelected && (
-                  <motion.div
-                    layoutId="activeTabIndicator"
-                    className="absolute left-0 top-3 bottom-3 w-[3px] bg-[#FF8A3D] rounded-r"
-                    transition={{ type: "spring", stiffness: 380, damping: 30 }}
-                  />
-                )}
-
-                <div
-                  className={`p-2.5 rounded-lg transition-transform group-hover:scale-105 ${
-                    isSelected ? "bg-[#FF8A3D]/10" : "bg-white/[0.03]"
+              <IntersectionObserverCard key={key} delay={140 + tabIdx * 50} direction="up" distance={15}>
+                <motion.button
+                  variants={itemVariants}
+                  onClick={() => setActiveTab(key)}
+                  className={`w-full relative p-4 rounded-xl text-left border transition-all flex items-center gap-3.5 group cursor-pointer ${
+                    isSelected
+                      ? "bg-gradient-to-r from-white/[0.04] to-transparent border-[#FF8A3D]/40 shadow-lg text-white"
+                      : "bg-transparent border-white/5 text-gray-400 hover:border-white/10 hover:bg-white/[0.01]"
                   }`}
+                  id={`tab-btn-${key}`}
                 >
-                  {getIcon(tab.iconName)}
-                </div>
+                  {/* Active slider bar */}
+                  {isSelected && (
+                    <motion.div
+                      layoutId="activeTabIndicator"
+                      className="absolute left-0 top-3 bottom-3 w-[3px] bg-[#FF8A3D] rounded-r"
+                      transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                    />
+                  )}
 
-                <div className="min-w-0 pr-2">
-                  <span className="block text-xs font-mono font-semibold tracking-wider uppercase group-hover:text-white transition-colors">
-                    {tab.title}
-                  </span>
-                  <span className="block text-[10px] text-gray-400 truncate mt-0.5 font-sans">
-                    {tab.subtitle}
-                  </span>
-                </div>
-              </motion.button>
+                  <div
+                    className={`p-2.5 rounded-lg transition-transform group-hover:scale-105 ${
+                      isSelected ? "bg-[#FF8A3D]/10" : "bg-white/[0.03]"
+                    }`}
+                  >
+                    {getIcon(tab.iconName)}
+                  </div>
+
+                  <div className="min-w-0 pr-2">
+                    <span className="block text-xs font-mono font-semibold tracking-wider uppercase group-hover:text-white transition-colors">
+                      {tab.title}
+                    </span>
+                    <span className="block text-[10px] text-gray-400 truncate mt-0.5 font-sans">
+                      {tab.subtitle}
+                    </span>
+                  </div>
+                </motion.button>
+              </IntersectionObserverCard>
             );
           })}
         </div>
@@ -528,38 +530,39 @@ export default function ProjectsSection() {
               {/* KPI Scorecard Grid */}
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pb-6 border-b border-white/5" id="dashboard-scorecard">
                 {activeData.metrics.map((metric, mIdx) => (
-                  <TiltCard
-                    key={mIdx}
-                    className="p-4 rounded-xl bg-white/[0.02] border border-white/5 hover:bg-white/[0.04] hover:border-[#FF8A3D]/25 transition-all text-left space-y-1 relative group cursor-pointer"
-                  >
-                    <span className="text-[10px] font-mono tracking-widest text-[#B3B3B3] uppercase">
-                       {metric.label}
-                    </span>
-                    <div className="flex justify-between items-end">
-                      <span className="text-2xl md:text-3xl font-display font-medium text-white group-hover:text-[#FF8A3D] transition-colors leading-none pt-1">
-                        {metric.value}
+                  <IntersectionObserverCard key={mIdx} delay={mIdx * 80} direction="up" distance={15}>
+                    <TiltCard
+                      className="p-4 rounded-xl bg-white/[0.02] border border-white/5 hover:bg-white/[0.04] hover:border-[#FF8A3D]/25 transition-all text-left space-y-1 relative group cursor-pointer"
+                    >
+                      <span className="text-[10px] font-mono tracking-widest text-[#B3B3B3] uppercase">
+                         {metric.label}
                       </span>
-                      {metric.trend && (
-                        <span
-                          className={`text-[9px] font-mono flex items-center gap-0.5 py-0.5 px-1.5 rounded-full leading-none ${
-                            metric.trend === "up"
-                              ? "bg-emerald-500/10 text-emerald-400"
-                              : "bg-red-500/10 text-red-400"
-                          }`}
-                        >
-                          {metric.trend === "up" ? (
-                            <TrendingUp className="w-3 h-3" />
-                          ) : (
-                            <TrendingDown className="w-3 h-3" />
-                          )}
-                          <span>{metric.trend === "up" ? "RAISE" : "DROP"}</span>
+                      <div className="flex justify-between items-end">
+                        <span className="text-2xl md:text-3xl font-display font-medium text-white group-hover:text-[#FF8A3D] transition-colors leading-none pt-1">
+                          {metric.value}
                         </span>
-                      )}
-                    </div>
-                    <span className="block text-[9px] font-mono text-gray-400 truncate">
-                      {metric.description}
-                    </span>
-                  </TiltCard>
+                        {metric.trend && (
+                          <span
+                            className={`text-[9px] font-mono flex items-center gap-0.5 py-0.5 px-1.5 rounded-full leading-none ${
+                              metric.trend === "up"
+                                ? "bg-emerald-500/10 text-emerald-400"
+                                : "bg-red-500/10 text-red-400"
+                            }`}
+                          >
+                            {metric.trend === "up" ? (
+                              <TrendingUp className="w-3 h-3" />
+                            ) : (
+                              <TrendingDown className="w-3 h-3" />
+                            )}
+                            <span>{metric.trend === "up" ? "RAISE" : "DROP"}</span>
+                          </span>
+                        )}
+                      </div>
+                      <span className="block text-[9px] font-mono text-gray-400 truncate">
+                        {metric.description}
+                      </span>
+                    </TiltCard>
+                  </IntersectionObserverCard>
                 ))}
               </div>
 
@@ -575,12 +578,13 @@ export default function ProjectsSection() {
 
                 <div className="space-y-3">
                   {activeData.insights.map((insight, iIdx) => (
-                    <div
-                      key={iIdx}
-                      className="p-3.5 rounded-xl bg-white/[0.01] border border-white/5 hover:border-white/10 hover:bg-white/[0.02] transition-colors text-xs text-gray-300 leading-relaxed font-sans"
-                    >
-                      {insight}
-                    </div>
+                    <IntersectionObserverCard key={iIdx} delay={iIdx * 70} direction="up" distance={12}>
+                      <div
+                        className="p-3.5 rounded-xl bg-white/[0.01] border border-white/5 hover:border-white/10 hover:bg-white/[0.02] transition-colors text-xs text-gray-300 leading-relaxed font-sans"
+                      >
+                        {insight}
+                      </div>
+                    </IntersectionObserverCard>
                   ))}
                 </div>
               </div>

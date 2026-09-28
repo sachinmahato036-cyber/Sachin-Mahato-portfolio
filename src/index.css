@@ -21,6 +21,18 @@
   .animate-shimmer {
     animation: shimmer 3s infinite linear;
   }
+
+  /* Professional Architectural Background Grids */
+  .bg-grid-mesh {
+    background-image: 
+      linear-gradient(to right, rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+  .bg-dot-matrix {
+    background-image: radial-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
 }
 
 @keyframes shimmer {
@@ -34,26 +46,11 @@
 
 /* Base style resets and customizations */
 body {
-  background-color: #010204;
+  background-color: #030508;
   color: #f5f5f5;
   overflow-x: hidden;
   font-family: var(--font-sans);
   transition: background-color 0.4s ease, color 0.4s ease;
-}
-
-/* Background overrides for cards and panels: Translucent cosmic glass */
-.bg-\[\#050505\] {
-  background-color: rgba(4, 5, 12, 0.62) !important;
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  transition: background-color 0.4s ease;
-}
-
-.bg-\[\#0B0B0B\] {
-  background-color: rgba(6, 8, 16, 0.68) !important;
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  transition: background-color 0.4s ease;
 }
 
 /* Custom visual scrollbar */
@@ -61,13 +58,13 @@ body {
   width: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #050505;
+  background: #000000;
 }
 ::-webkit-scrollbar-thumb {
-  background: #1a1a1a;
+  background: #222222;
   border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #2a2a2a;
+  background: #333333;
 }
 

@@ -15,7 +15,7 @@ export default function AppleHeaderNav() {
       setScrolled(window.scrollY > 20);
 
       // Section highlight calculation
-      const sections = ["about-section", "experience-section", "projects-section", "skills-section", "credentials-section", "contact-section"];
+      const sections = ["workstation-section", "about-section", "experience-section", "projects-section", "skills-section", "credentials-section", "contact-section"];
       const scrollPosition = window.scrollY + 200;
 
       for (const sectionId of sections) {
@@ -39,6 +39,7 @@ export default function AppleHeaderNav() {
   }, []);
 
   const navItems = [
+    { label: "Workstation", href: "#workstation-section", id: "workstation-section" },
     { label: "Profile", href: "#about-section", id: "about-section" },
     { label: "Journey", href: "#experience-section", id: "experience-section" },
     { label: "Decathlon BI", href: "#projects-section", id: "projects-section" },

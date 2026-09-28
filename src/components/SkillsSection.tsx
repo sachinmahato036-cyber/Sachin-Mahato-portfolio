@@ -35,7 +35,7 @@ const SKILL_CATEGORIES: SkillCategory[] = [
     color: "#38BDF8", // Cyan / Blue
     skills: [
       { name: "Market Research & Consumer Analysis", level: 90, description: "Primary/secondary field studies, customer preference benchmarking, and competitive analysis" },
-      { name: "Retail Merchandising & Live Projects", level: 88, description: "Store layout optimization, product placement, and customer buying behavior diagnostics" },
+      { name: "Live Projects & Store Analytics", level: 88, description: "Store layout optimization, product placement, and customer buying behavior diagnostics" },
       { name: "Power BI & Data Visualization", level: 86, description: "Interactive dashboards, performance reporting metrics, and data presentation" },
       { name: "Advanced Microsoft Excel", level: 90, description: "Financial forecasting, pivot tables, CRM lead segmentation, and data analysis" }
     ]
@@ -339,8 +339,6 @@ export default function SkillsSection() {
       className="relative w-full max-w-7xl mx-auto px-4 sm:px-6 md:px-8 py-24 md:py-32 border-t border-white/5 bg-transparent"
       id="skills-section"
     >
-      <div className="absolute inset-0 bg-radial-gradient from-[#ff8a3d]/5 to-transparent pointer-events-none z-0 filter blur-3xl opacity-40" />
-
       {/* Header section */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -351,7 +349,7 @@ export default function SkillsSection() {
         id="skills-header-text"
       >
         <span className="text-xs font-mono font-bold tracking-[0.2em] text-[#FFB067] uppercase mb-2">
-          [ 04 // EXPERTISE ]
+          [ 05 // EXPERTISE ]
         </span>
         <h2 className="text-3xl md:text-5xl font-display font-black text-white uppercase tracking-tight">
           Capabilities & <span className="text-[#FFB067] text-glow-blue">Stack</span>
